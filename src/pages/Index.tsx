@@ -1,66 +1,98 @@
-import { motion } from 'framer-motion';
-import { Users, Church, DollarSign, Calendar } from 'lucide-react';
+import { motion } from "framer-motion";
+import { Navbar } from "@/components/Navbar";
+import { stats } from "@/types/stats"; // Importando as stats do arquivo separado
+import { Users, Church, DollarSign, Calendar } from "lucide-react";
 
-const Index = () => {
-  const stats = [
-    { title: 'Total de Membros', value: '120', icon: Users, color: 'bg-blue-500' },
-    { title: 'Células Ativas', value: '15', icon: Church, color: 'bg-green-500' },
-    { title: 'Eventos do Mês', value: '8', icon: Calendar, color: 'bg-purple-500' },
-    { title: 'Dízimos do Mês', value: 'R$ 15.000', icon: DollarSign, color: 'bg-yellow-500' },
-  ];
+// Componente para exibir cada estatística
+const StatCard = ({ stat }: { stat: any }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
+    >
+      <div className="flex items-center space-x-4">
+        <div className={`p-3 rounded-full ${stat.color}`}>
+          <stat.icon size={24} className="text-white" aria-hidden="true" />
+        </div>
+        <div>
+          <p className="text-gray-500 text-sm">{stat.title}</p>
+          <p
+            className="text-2xl font-bold text-gray-800"
+            aria-label={`${stat.title}: ${stat.value}`}
+          >
+            {stat.value}
+          </p>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+// Componente genérico para seções com título e conteúdo
+const SectionCard = ({
+  title,
+  children,
+  delay = 0,
+  direction = "left",
+}: {
+  title: string;
+  children: React.ReactNode;
+  delay?: number;
+  direction?: "left" | "right";
+}) => {
+  const xDirection = direction === "left" ? -20 : 20;
 
   return (
-    <div className="space-y-8">
-      <motion.h1
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-3xl font-bold text-gray-800"
-      >
-        Dashboard
-      </motion.h1>
+    <motion.div
+      initial={{ opacity: 0, x: xDirection }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay }}
+      className="bg-white p-6 rounded-xl shadow-lg"
+    >
+      <h2 className="text-xl font-bold text-gray-800 mb-4" aria-label={title}>
+        {title}
+      </h2>
+      {children}
+    </motion.div>
+  );
+};
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, index) => (
-          <motion.div
-            key={stat.title}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
-          >
-            <div className="flex items-center space-x-4">
-              <div className={`p-3 rounded-full ${stat.color}`}>
-                <stat.icon className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-gray-500 text-sm">{stat.title}</p>
-                <p className="text-2xl font-bold text-gray-800">{stat.value}</p>
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+const Index = () => {
+  return (
+    <div className="min-h-screen bg-gray-100">
+      {/* Navbar */}
+      <Navbar />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4 }}
-          className="bg-white p-6 rounded-xl shadow-lg"
+      {/* Conteúdo principal */}
+      <div className="container mx-auto px-4 py-8 space-y-8">
+        {/* Título da página */}
+        <motion.h1
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-3xl text-center font-bold text-gray-800"
         >
-          <h2 className="text-xl font-bold text-gray-800 mb-4">Próximos Eventos</h2>
-          <p className="text-gray-600">Em breve...</p>
-        </motion.div>
+          Dashboard
+        </motion.h1>
 
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4 }}
-          className="bg-white p-6 rounded-xl shadow-lg"
-        >
-          <h2 className="text-xl font-bold text-gray-800 mb-4">Resumo Financeiro</h2>
-          <p className="text-gray-600">Em breve...</p>
-        </motion.div>
+        {/* Seção de Estatísticas */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {stats.map((stat, index) => (
+            <StatCard key={stat.title} stat={stat} />
+          ))}
+        </div>
+
+        {/* Seção de Próximos Eventos e Resumo Financeiro */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <SectionCard title="Próximos Eventos" delay={0.4} direction="left">
+            <p className="text-gray-600">Em breve...</p>
+          </SectionCard>
+          <SectionCard title="Resumo Financeiro" delay={0.4} direction="right">
+            <p className="text-gray-600">Em breve...</p>
+          </SectionCard>
+        </div>
       </div>
     </div>
   );
