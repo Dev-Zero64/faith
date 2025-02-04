@@ -35,17 +35,17 @@ const MemberRow = ({
         <div className="flex gap-2">
           <button
             className="text-blue-500 hover:text-blue-600 transition-colors"
-            //onClick={() => handleEdit(member)}
+            onClick={() => handleEdit(member)}
             aria-label={`Editar membro ${member.name}`}
           >
-            Editar (Em breve)
+            Editar
           </button>
           <button
             className="text-red-500 hover:text-red-600 transition-colors"
-            //onClick={() => handleDelete(member.id)}
+            onClick={() => handleDelete(member.id)}
             aria-label={`Excluir membro ${member.name}`}
           >
-            Excluir (Em breve)
+            Excluir
           </button>
         </div>
       </TableCell>
