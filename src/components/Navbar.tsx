@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, LogOut, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Home } from "lucide-react";
+import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { menuItems } from "@/types/menuItems";
 
 const Dashboard = {
@@ -29,7 +30,7 @@ const DropdownMenu = ({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2 }}
-          className="absolute top-full left-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg overflow-hidden z-10"
+          className="absolute top-full right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg overflow-hidden z-10"
         >
           <div className="p-2 space-y-2">
             {submenu.map((subItem) => (
@@ -52,16 +53,26 @@ const DropdownMenu = ({
 
 export const Navbar = () => {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [isProfileOpen, setIsProfileOpen] = useState(false); // Estado para controlar o dropdown do perfil
+  const { user, signOut } = useAuth(); // Use o contexto de autenticação
 
   // Função para alternar o menu aberto
   const toggleSubmenu = (title: string) => {
     setOpenMenu((prev) => (prev === title ? null : title));
   };
 
+  // Função para fazer logout
+  const handleLogout = async () => {
+    try {
+      await signOut(); // Chama a função de logout do Supabase
+      setIsProfileOpen(false); // Fecha o dropdown após o logout
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+    }
+  };
+
   return (
-    <div
-      className="w-full h-20 bg-gray-900 text-white flex items-center justify-between px-6"
-    >
+    <div className="w-full h-20 bg-gray-900 text-white flex items-center justify-between px-6">
       {/* Logo */}
       <Link to={"/"}>
         <div className="ml-10 text-xl font-bold">Gestão da Igreja</div>
@@ -95,7 +106,6 @@ export const Navbar = () => {
                 />
               )}
             </div>
-
             {/* Submenu */}
             {item.submenu && (
               <DropdownMenu
@@ -107,6 +117,51 @@ export const Navbar = () => {
           </div>
         ))}
       </nav>
+
+      {/* Opção de Perfil */}
+      {user && (
+        <div className="relative">
+          {/* Botão do perfil */}
+          <div
+            className="flex items-center gap-2 p-2 rounded-lg hover:bg-white/10 cursor-pointer transition-all"
+            onClick={() => setIsProfileOpen((prev) => !prev)}
+            aria-expanded={isProfileOpen}
+            aria-haspopup={true}
+          >
+            <User size={20} />
+            <span>{user.email || "Usuário"}</span>
+            <ChevronDown
+              size={20}
+              className={`transform transition-transform ${
+                isProfileOpen ? "rotate-180" : ""
+              }`}
+            />
+          </div>
+          {/* Dropdown do perfil */}
+          <AnimatePresence>
+            {isProfileOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className="absolute top-full right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg overflow-hidden z-10"
+              >
+                <div className="p-2 space-y-2">
+                  <button
+                    className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-white/10 transition-all"
+                    onClick={handleLogout}
+                    aria-label="Sair"
+                  >
+                    <LogOut size={20} />
+                    Sair
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
     </div>
   );
 };

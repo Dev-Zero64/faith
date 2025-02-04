@@ -1,10 +1,19 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/Navbar";
-import { stats } from "@/types/stats"; // Importando as stats do arquivo separado
+import { supabase } from "@/services/supabase";
 import { Users, Church, DollarSign, Calendar } from "lucide-react";
 
+// Interface para as estatísticas
+interface Stat {
+  title: string;
+  value: string | number;
+  color: string;
+  icon: any; // Ícone React
+}
+
 // Componente para exibir cada estatística
-const StatCard = ({ stat }: { stat: any }) => {
+const StatCard = ({ stat }: { stat: Stat }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -43,7 +52,6 @@ const SectionCard = ({
   direction?: "left" | "right";
 }) => {
   const xDirection = direction === "left" ? -20 : 20;
-
   return (
     <motion.div
       initial={{ opacity: 0, x: xDirection }}
@@ -60,6 +68,61 @@ const SectionCard = ({
 };
 
 const Index = () => {
+  // Estados para armazenar os dados e o estado de carregamento
+  const [memberCount, setMemberCount] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Função para buscar o número de membros cadastrados no Supabase
+  useEffect(() => {
+    const fetchMemberCount = async () => {
+      try {
+        const { data, error } = await supabase.from("membros").select("*");
+
+        if (error) {
+          throw error;
+        }
+
+        // Atualiza o estado com o número de membros
+        setMemberCount(data?.length || 0);
+      } catch (err: any) {
+        setError(err.message || "Erro ao buscar dados dos membros.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMemberCount();
+  }, []);
+
+  // Dados das estatísticas
+  const stats: Stat[] = [
+    {
+      title: "Membros Cadastrados",
+      value: loading ? "Carregando..." : memberCount,
+      color: "bg-blue-500",
+      icon: Users,
+    },
+    {
+      title: "Eventos Realizados",
+      value: "Em breve...",
+      color: "bg-green-500",
+      icon: Calendar,
+    },
+    {
+      title: "Entradas Financeiras",
+      value: "Em breve...",
+      color: "bg-purple-500",
+      icon: DollarSign,
+    },
+    {
+      title: "Igrejas Parceiras",
+      value: "Em breve...",
+      color: "bg-yellow-500",
+      icon: Church,
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Navbar */}
@@ -76,6 +139,9 @@ const Index = () => {
         >
           Dashboard
         </motion.h1>
+
+        {/* Mensagem de erro */}
+        {error && <p className="text-red-500 text-center text-sm">{error}</p>}
 
         {/* Seção de Estatísticas */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

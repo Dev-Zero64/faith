@@ -26,7 +26,7 @@ const cellsData = [
     leader: "Maria Souza",
     members: 8,
     address: "Avenida Brasil, 456",
-    status: "inactive",
+    status: "active",
   },
   {
     id: 3,
@@ -82,12 +82,12 @@ const CelulasPage = () => {
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold text-gray-800">Células</h1>
           <Link to="/celulas/nova">
-          <button
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
-            aria-label="Adicionar nova célula"
-          >
-            Nova Célula
-          </button>
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+              aria-label="Adicionar nova célula"
+            >
+              Nova Célula
+            </button>
           </Link>
         </div>
 

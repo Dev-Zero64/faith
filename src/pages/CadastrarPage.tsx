@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import { supabase } from "@/services/supabase";
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/Navbar";
 
@@ -7,11 +7,9 @@ const CadastroPage = () => {
   // Estado para armazenar os dados do formulário
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
-    phone: "",
-    birthDate: "",
-    address: "",
-    type: "membro", // 'membro' ou 'visitante'
+    data_nascimento: "",
+    sexo: "masculino", // 'masculino' ou 'feminino'
+    cep: "",
   });
 
   // Estado para mensagens de sucesso/erro
@@ -26,34 +24,31 @@ const CadastroPage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Função para enviar os dados via axios
+  // Função para enviar os dados ao Supabase
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
 
     try {
-      // Envie os dados para o servidor
-      const response = await axios.post(
-        "https://api.example.com/register",
-        formData
-      );
+      // Insere os dados na tabela "membros" no Supabase
+      const { data, error } = await supabase.from("membros").insert([formData]);
 
-      // Exiba mensagem de sucesso
-      setMessage(response.data.message || "Cadastro realizado com sucesso!");
+      if (error) {
+        throw error;
+      }
+
+      // Exibe mensagem de sucesso
+      setMessage("Cadastro realizado com sucesso!");
       setFormData({
         name: "",
-        email: "",
-        phone: "",
-        birthDate: "",
-        address: "",
-        type: "membro",
+        data_nascimento: "",
+        sexo: "masculino",
+        cep: "",
       });
-    } catch (error: any) {
-      // Exiba mensagem de erro
-      setMessage(
-        error.response?.data?.message || "Erro ao realizar o cadastro."
-      );
+    } catch (err: any) {
+      // Exibe mensagem de erro
+      setMessage(err.message || "Erro ao realizar o cadastro.");
     } finally {
       setLoading(false);
     }
@@ -70,7 +65,7 @@ const CadastroPage = () => {
       >
         {/* Cabeçalho */}
         <h1 className="text-3xl font-bold text-gray-800">
-          Cadastrar Novo Membro/Visitante
+          Cadastrar Novo Membro
         </h1>
 
         {/* Formulário */}
@@ -97,100 +92,62 @@ const CadastroPage = () => {
             />
           </div>
 
-          {/* Email */}
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            />
-          </div>
-
-          {/* Telefone */}
-          <div>
-            <label
-              htmlFor="phone"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Telefone
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            />
-          </div>
-
           {/* Data de Nascimento */}
           <div>
             <label
-              htmlFor="birthDate"
+              htmlFor="data_nascimento"
               className="block text-sm font-medium text-gray-700"
             >
               Data de Nascimento
             </label>
             <input
               type="date"
-              id="birthDate"
-              name="birthDate"
-              value={formData.birthDate}
+              id="data_nascimento"
+              name="data_nascimento"
+              value={formData.data_nascimento}
               onChange={handleChange}
               required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
           </div>
 
-          {/* Endereço */}
+          {/* Sexo */}
           <div>
             <label
-              htmlFor="address"
+              htmlFor="sexo"
               className="block text-sm font-medium text-gray-700"
             >
-              Endereço
+              Sexo
+            </label>
+            <select
+              id="sexo"
+              name="sexo"
+              value={formData.sexo}
+              onChange={handleChange}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            >
+              <option value="masculino">Masculino</option>
+              <option value="feminino">Feminino</option>
+            </select>
+          </div>
+
+          {/* CEP */}
+          <div>
+            <label
+              htmlFor="cep"
+              className="block text-sm font-medium text-gray-700"
+            >
+              CEP
             </label>
             <input
               type="text"
-              id="address"
-              name="address"
-              value={formData.address}
+              id="cep"
+              name="cep"
+              value={formData.cep}
               onChange={handleChange}
               required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
-          </div>
-
-          {/* Tipo (Membro ou Visitante) */}
-          <div>
-            <label
-              htmlFor="type"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Tipo
-            </label>
-            <select
-              id="type"
-              name="type"
-              value={formData.type}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            >
-              <option value="membro">Membro</option>
-              <option value="visitante">Visitante</option>
-            </select>
           </div>
 
           {/* Botão de Envio */}

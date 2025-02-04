@@ -18,7 +18,9 @@ const CadastrarCelulaPage = () => {
   const [loading, setLoading] = useState(false);
 
   // Função para lidar com mudanças no formulário
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -31,7 +33,10 @@ const CadastrarCelulaPage = () => {
 
     try {
       // Envie os dados para o servidor
-      const response = await axios.post("https://api.example.com/cells", formData);
+      const response = await axios.post(
+        "https://api.example.com/cells",
+        formData
+      );
 
       // Exiba mensagem de sucesso
       setMessage(response.data.message || "Célula cadastrada com sucesso!");
@@ -44,7 +49,9 @@ const CadastrarCelulaPage = () => {
       });
     } catch (error: any) {
       // Exiba mensagem de erro
-      setMessage(error.response?.data?.message || "Erro ao cadastrar a célula.");
+      setMessage(
+        error.response?.data?.message || "Erro ao cadastrar a célula."
+      );
     } finally {
       setLoading(false);
     }
@@ -60,13 +67,21 @@ const CadastrarCelulaPage = () => {
         className="space-y-6 container mx-auto px-4 py-8"
       >
         {/* Cabeçalho */}
-        <h1 className="text-3xl font-bold text-gray-800">Cadastrar Nova Célula</h1>
+        <h1 className="text-3xl font-bold text-gray-800">
+          Cadastrar Nova Célula
+        </h1>
 
         {/* Formulário */}
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-4">
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white rounded-lg shadow p-6 space-y-4"
+        >
           {/* Nome da Célula */}
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700"
+            >
               Nome da Célula
             </label>
             <input
@@ -82,7 +97,10 @@ const CadastrarCelulaPage = () => {
 
           {/* Líder */}
           <div>
-            <label htmlFor="leader" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="leader"
+              className="block text-sm font-medium text-gray-700"
+            >
               Líder
             </label>
             <input
@@ -98,7 +116,10 @@ const CadastrarCelulaPage = () => {
 
           {/* Endereço */}
           <div>
-            <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="address"
+              className="block text-sm font-medium text-gray-700"
+            >
               Endereço
             </label>
             <input
@@ -114,7 +135,10 @@ const CadastrarCelulaPage = () => {
 
           {/* Dia da Reunião */}
           <div>
-            <label htmlFor="meetingDay" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="meetingDay"
+              className="block text-sm font-medium text-gray-700"
+            >
               Dia da Reunião
             </label>
             <select
@@ -138,7 +162,10 @@ const CadastrarCelulaPage = () => {
 
           {/* Horário da Reunião */}
           <div>
-            <label htmlFor="meetingTime" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="meetingTime"
+              className="block text-sm font-medium text-gray-700"
+            >
               Horário da Reunião
             </label>
             <input
