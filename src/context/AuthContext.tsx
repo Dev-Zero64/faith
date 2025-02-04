@@ -25,8 +25,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const setupAuth = async () => {
       // Verifica se há um usuário logado ao carregar o app
-      const session = supabase.auth.getSession();
-      if (session) setUser((await session).data.session?.user || null);
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (session?.user) {
+        setUser(session.user);
+      }
 
       // Escuta mudanças na autenticação
       const { data: authListener } = supabase.auth.onAuthStateChange(
