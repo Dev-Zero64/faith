@@ -66,7 +66,7 @@ const FinanceChart = ({ data }: { data: any[] }) => {
 const FinancasPage = () => {
   // Dados fictícios para o gráfico
   const data = [
-    { name: "Jan", entradas: 100, saidas: 2400 },
+    { name: "Jan", entradas: 12, saidas: 2400 },
     { name: "Fev", entradas: 3000, saidas: 1398 },
     { name: "Mar", entradas: 2000, saidas: 9800 },
   ];
