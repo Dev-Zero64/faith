@@ -46,9 +46,7 @@ const CadastrarEventoPage = () => {
       });
     } catch (error: any) {
       // Exiba mensagem de erro
-      setMessage(
-        error.message || "Erro ao cadastrar o evento."
-      );
+      setMessage(error.message || "Erro ao cadastrar o evento.");
     } finally {
       setLoading(false);
     }

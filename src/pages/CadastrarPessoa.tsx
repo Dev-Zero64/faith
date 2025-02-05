@@ -6,10 +6,14 @@ import { Navbar } from "@/components/Navbar";
 const CadastroPage = () => {
   // Estado para armazenar os dados do formulário
   const [formData, setFormData] = useState({
-    name: "",
+    nome: "",
     data_nascimento: "",
     sexo: "masculino", // 'masculino' ou 'feminino'
     cep: "",
+    email: "",
+    batizado: false,
+    estado_civil: "",
+    escolaridade: "",
   });
 
   // Estado para mensagens de sucesso/erro
@@ -20,8 +24,12 @@ const CadastroPage = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const target = e.target as HTMLInputElement;
+    const { name, value, type, checked } = target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   // Função para enviar os dados ao Supabase
@@ -41,10 +49,14 @@ const CadastroPage = () => {
       // Exibe mensagem de sucesso
       setMessage("Cadastro realizado com sucesso!");
       setFormData({
-        name: "",
+        nome: "",
         data_nascimento: "",
         sexo: "masculino",
         cep: "",
+        email: "",
+        batizado: false,
+        estado_civil: "",
+        escolaridade: "",
       });
     } catch (err: any) {
       // Exibe mensagem de erro
@@ -76,16 +88,16 @@ const CadastroPage = () => {
           {/* Nome */}
           <div>
             <label
-              htmlFor="name"
+              htmlFor="nome"
               className="block text-sm font-medium text-gray-700"
             >
               Nome
             </label>
             <input
               type="text"
-              id="name"
-              name="name"
-              value={formData.name}
+              id="nome"
+              name="nome"
+              value={formData.nome}
               onChange={handleChange}
               required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -144,6 +156,81 @@ const CadastroPage = () => {
               id="cep"
               name="cep"
               value={formData.cep}
+              onChange={handleChange}
+              required
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+
+          {/* Email */}
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+
+          {/* Batizado */}
+          <div>
+            <label
+              htmlFor="batizado"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Batizado
+            </label>
+            <input
+              type="checkbox"
+              id="batizado"
+              name="batizado"
+              checked={formData.batizado}
+              onChange={handleChange}
+              className="mt-1"
+            />
+          </div>
+
+          {/* Estado Civil */}
+          <div>
+            <label
+              htmlFor="estado_civil"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Estado Civil
+            </label>
+            <input
+              type="text"
+              id="estado_civil"
+              name="estado_civil"
+              value={formData.estado_civil}
+              onChange={handleChange}
+              required
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+
+          {/* Escolaridade */}
+          <div>
+            <label
+              htmlFor="escolaridade"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Escolaridade
+            </label>
+            <input
+              type="text"
+              id="escolaridade"
+              name="escolaridade"
+              value={formData.escolaridade}
               onChange={handleChange}
               required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"

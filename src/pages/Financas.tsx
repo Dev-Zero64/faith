@@ -10,8 +10,6 @@ import {
   Legend,
 } from "recharts";
 import { Navbar } from "@/components/Navbar";
-import { useEffect, useState } from "react";
-import { supabase } from "@/services/supabase";
 
 // Componente para exibir um cartão de resumo financeiro
 const FinanceCard = ({
@@ -41,34 +39,6 @@ const FinanceCard = ({
     </Card>
   );
 };
-const [totalEntradas, setTotalEntradas] = useState(0);
-const [error, setError] = useState<string | null>(null);
-useEffect(() => {
-  const fetchEntradas = async () => {
-    try {
-      const startOfMonth = new Date();
-      startOfMonth.setDate(1);
-      startOfMonth.setHours(0, 0, 0, 0);
-
-      const { data, error } = await supabase
-        .from("entradas")
-        .select("valor")
-        .gte("data", startOfMonth.toISOString());
-
-      if (error) throw error;
-
-      const total = data?.reduce(
-        (sum, entrada) => sum + (entrada.valor || 0),
-        0
-      );
-      setTotalEntradas(total || 0);
-    } catch (err: any) {
-      setError(err.message || "Erro ao buscar entradas financeiras.");
-    }
-  };
-
-  fetchEntradas();
-}, []);
 
 // Componente para exibir o gráfico de movimentações
 const FinanceChart = ({ data }: { data: any[] }) => {
