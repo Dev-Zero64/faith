@@ -6,12 +6,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "./context/AuthContext"; // Importe o AuthProvider e useAuth
 import { PrivateRoute } from "./components/PrivateRoutes"; // Importe o PrivateRoute
 import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
+import NotFound from "./auth/NotFound";
 import CelulasPage from "./pages/Celulas";
 import FinancasPage from "./pages/Financas";
 import EventosPage from "./pages/Eventos";
 import MembrosPage from "./pages/Membros";
-import VisitantesPage from "./pages/Visitantes";
 import CadastroPage from "./pages/CadastrarPessoa";
 import EntradasPage from "./pages/Entradas";
 import SaidasPage from "./pages/Saidas";
@@ -19,8 +18,8 @@ import CadastrarCelulaPage from "./pages/CadastrarCelula";
 import CadastrarEventoPage from "./pages/CadastrarEvento";
 import CadastrarEntradaPage from "./pages/CadastrarEntrada";
 import CadastrarSaidaPage from "./pages/CadastrarSaida";
-import RegisterPage from "./pages/Register";
-import LoginPage from "./pages/Login";
+import RegisterPage from "./auth/Register";
+import LoginPage from "./auth/Login";
 import { supabase } from "./services/supabase";
 import { useEffect } from "react";
 import ResetPasswordPage from "./auth/ResetPassword";
@@ -149,14 +148,7 @@ const App = () => {
                   </PrivateRoute>
                 }
               />
-              <Route
-                path="/visitantes"
-                element={
-                  <PrivateRoute>
-                    <VisitantesPage />
-                  </PrivateRoute>
-                }
-              />
+
               <Route
                 path="/membros/novo"
                 element={
