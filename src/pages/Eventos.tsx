@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Table,
@@ -8,8 +9,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Navbar } from "@/components/Navbar";
-import { eventData } from "@/types/eventData"; // Importando dados fictícios de um arquivo separado
 import { Link } from "react-router-dom";
+import { supabase } from "@/services/supabase"; // Importe o cliente Supabase
 
 // Componente para botões de ação
 const ActionButton = ({
@@ -27,7 +28,6 @@ const ActionButton = ({
     blue: "text-blue-500 hover:text-blue-600",
     red: "text-red-500 hover:text-red-600",
   };
-
   return (
     <button
       className={`${buttonColors[color]} transition-colors`}
@@ -42,24 +42,22 @@ const ActionButton = ({
 // Componente para renderizar cada linha da tabela
 const TableRowComponent = ({ event }: { event: any }) => {
   const isPast = event.status === "past";
-
   return (
     <TableRow className={isPast ? "opacity-70" : ""}>
-      <TableCell>{event.date}</TableCell>
-      <TableCell>{event.title}</TableCell>
-      <TableCell>{event.description}</TableCell>
-      <TableCell>{event.participants}</TableCell>
+      <TableCell>{event.data}</TableCell>
+      <TableCell>{event.nome}</TableCell>
+      <TableCell>{event.detalhes}</TableCell>
       <TableCell>
         <div className="flex gap-2">
           <ActionButton
             label="Editar"
             color="blue"
-            ariaLabel={`Editar evento ${event.title}`}
+            ariaLabel={`Editar evento ${event.nome}`}
           />
           <ActionButton
             label="Excluir"
             color="red"
-            ariaLabel={`Excluir evento ${event.title}`}
+            ariaLabel={`Excluir evento ${event.nome}`}
           />
         </div>
       </TableCell>
@@ -68,6 +66,31 @@ const TableRowComponent = ({ event }: { event: any }) => {
 };
 
 const EventosPage = () => {
+  const [eventsData, setEventsData] = useState([]); // Estado para armazenar os dados dos eventos
+  const [loading, setLoading] = useState(true); // Estado para controlar o carregamento
+
+  // Função para buscar os dados do Supabase
+  const fetchEvents = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase.from("eventos").select("*");
+      if (error) {
+        console.error("Erro ao buscar eventos:", error);
+      } else {
+        setEventsData(data || []);
+      }
+    } catch (err) {
+      console.error("Erro inesperado:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Chama a função fetchEvents quando o componente é montado
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
   return (
     <>
       <Navbar />
@@ -89,7 +112,6 @@ const EventosPage = () => {
             </button>
           </Link>
         </div>
-
         {/* Tabela de Eventos */}
         <div className="bg-white rounded-lg shadow p-6 overflow-x-auto">
           <Table>
@@ -98,14 +120,27 @@ const EventosPage = () => {
                 <TableHead>Data</TableHead>
                 <TableHead>Título</TableHead>
                 <TableHead>Descrição</TableHead>
-                <TableHead>Participantes</TableHead>
                 <TableHead>Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {eventData.map((event) => (
-                <TableRowComponent key={event.id} event={event} />
-              ))}
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center">
+                    Carregando eventos...
+                  </TableCell>
+                </TableRow>
+              ) : eventsData.length > 0 ? (
+                eventsData.map((event) => (
+                  <TableRowComponent key={event.id} event={event} />
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center">
+                    Nenhum evento encontrado.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </div>

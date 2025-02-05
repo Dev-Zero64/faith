@@ -7,22 +7,24 @@ import { AuthProvider, useAuth } from "./context/AuthContext"; // Importe o Auth
 import { PrivateRoute } from "./components/PrivateRoutes"; // Importe o PrivateRoute
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import CelulasPage from "./pages/CelulasPage";
-import FinancasPage from "./pages/FinancasPage";
-import EventosPage from "./pages/EventosPage";
-import MembrosPage from "./pages/MembrosPage";
-import VisitantesPage from "./pages/VisitantesPage";
-import CadastroPage from "./pages/CadastrarPage";
-import EntradasPage from "./pages/EntradasPage";
-import SaidasPage from "./pages/SaidasPage";
-import CadastrarCelulaPage from "./pages/CadastrarCelulaPage";
-import CadastrarEventoPage from "./pages/CadastrarEventoPage";
-import CadastrarEntradaPage from "./pages/CadastrarEntradaPage";
-import CadastrarSaidaPage from "./pages/CadastrarSaidaPage";
-import RegisterPage from "./pages/RegisterPage";
-import LoginPage from "./pages/LoginPage";
+import CelulasPage from "./pages/Celulas";
+import FinancasPage from "./pages/Financas";
+import EventosPage from "./pages/Eventos";
+import MembrosPage from "./pages/Membros";
+import VisitantesPage from "./pages/Visitantes";
+import CadastroPage from "./pages/CadastrarPessoa";
+import EntradasPage from "./pages/Entradas";
+import SaidasPage from "./pages/Saidas";
+import CadastrarCelulaPage from "./pages/CadastrarCelula";
+import CadastrarEventoPage from "./pages/CadastrarEvento";
+import CadastrarEntradaPage from "./pages/CadastrarEntrada";
+import CadastrarSaidaPage from "./pages/CadastrarSaida";
+import RegisterPage from "./pages/Register";
+import LoginPage from "./pages/Login";
 import { supabase } from "./services/supabase";
 import { useEffect } from "react";
+import ResetPasswordPage from "./auth/ResetPassword";
+import UpdatePassword from "./auth/UpdatePassword";
 
 const queryClient = new QueryClient();
 
@@ -56,7 +58,8 @@ const App = () => {
               {/* Rota pública */}
               <Route path="/login" element={<LoginPage />} />
               <Route path="/cadastro" element={<RegisterPage />} />
-
+              <Route path="reset-password" element={<ResetPasswordPage />} />
+              <Route path="update-password" element={<UpdatePassword />} />
               {/* Rotas privadas */}
               <Route
                 path="/"

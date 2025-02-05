@@ -21,7 +21,7 @@ export const menuItems: MenuItem[] = [
     path: "/membros",
     submenu: [
       { title: "Listar Membros", path: "/membros" },
-      { title: "Listar Visitantes", path: "/visitantes" },
+      //{ title: "Listar Visitantes", path: "/visitantes" },
       { title: "Novo Cadastro", path: "/membros/novo" },
     ],
   },

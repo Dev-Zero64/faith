@@ -1,16 +1,15 @@
 import { useState } from "react";
-import axios from "axios";
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/Navbar";
+import { supabase } from "@/services/supabase"; // Importe o cliente Supabase
 
-const CadastrarCelulaPage = () => {
+const CadastrarEntradaPage = () => {
   // Estado para armazenar os dados do formulário
   const [formData, setFormData] = useState({
-    name: "",
-    leader: "",
-    address: "",
-    meetingDay: "",
-    meetingTime: "",
+    detalhes: "",
+    categoria: "Contribuição", // Valor padrão
+    valor: "",
+    data: "",
   });
 
   // Estado para mensagens de sucesso/erro
@@ -25,33 +24,31 @@ const CadastrarCelulaPage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Função para enviar os dados via axios
+  // Função para enviar os dados via Supabase
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
 
     try {
-      // Envie os dados para o servidor
-      const response = await axios.post(
-        "https://api.example.com/cells",
-        formData
-      );
+      // Envie os dados para o Supabase
+      const { error } = await supabase.from("entradas").insert([formData]);
+
+      if (error) {
+        throw error;
+      }
 
       // Exiba mensagem de sucesso
-      setMessage(response.data.message || "Célula cadastrada com sucesso!");
+      setMessage("Entrada cadastrada com sucesso!");
       setFormData({
-        name: "",
-        leader: "",
-        address: "",
-        meetingDay: "",
-        meetingTime: "",
+        detalhes: "",
+        categoria: "Contribuição",
+        valor: "",
+        data: "",
       });
     } catch (error: any) {
       // Exiba mensagem de erro
-      setMessage(
-        error.response?.data?.message || "Erro ao cadastrar a célula."
-      );
+      setMessage(error.message || "Erro ao cadastrar a entrada.");
     } finally {
       setLoading(false);
     }
@@ -68,7 +65,7 @@ const CadastrarCelulaPage = () => {
       >
         {/* Cabeçalho */}
         <h1 className="text-3xl font-bold text-gray-800">
-          Cadastrar Nova Célula
+          Cadastrar Nova Entrada
         </h1>
 
         {/* Formulário */}
@@ -76,103 +73,81 @@ const CadastrarCelulaPage = () => {
           onSubmit={handleSubmit}
           className="bg-white rounded-lg shadow p-6 space-y-4"
         >
-          {/* Nome da Célula */}
+          {/* Detalhes */}
           <div>
             <label
-              htmlFor="name"
+              htmlFor="detalhes"
               className="block text-sm font-medium text-gray-700"
             >
-              Nome da Célula
+              Detalhes
             </label>
             <input
               type="text"
-              id="name"
-              name="name"
-              value={formData.name}
+              id="detalhes"
+              name="detalhes"
+              value={formData.detalhes}
               onChange={handleChange}
               required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
           </div>
 
-          {/* Líder */}
+          {/* Categoria */}
           <div>
             <label
-              htmlFor="leader"
+              htmlFor="categoria"
               className="block text-sm font-medium text-gray-700"
             >
-              Líder
-            </label>
-            <input
-              type="text"
-              id="leader"
-              name="leader"
-              value={formData.leader}
-              onChange={handleChange}
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            />
-          </div>
-
-          {/* Endereço */}
-          <div>
-            <label
-              htmlFor="address"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Endereço
-            </label>
-            <input
-              type="text"
-              id="address"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            />
-          </div>
-
-          {/* Dia da Reunião */}
-          <div>
-            <label
-              htmlFor="meetingDay"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Dia da Reunião
+              Categoria
             </label>
             <select
-              id="meetingDay"
-              name="meetingDay"
-              value={formData.meetingDay}
+              id="categoria"
+              name="categoria"
+              value={formData.categoria}
               onChange={handleChange}
               required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             >
-              <option value="">Selecione um dia</option>
-              <option value="Segunda-feira">Segunda-feira</option>
-              <option value="Terça-feira">Terça-feira</option>
-              <option value="Quarta-feira">Quarta-feira</option>
-              <option value="Quinta-feira">Quinta-feira</option>
-              <option value="Sexta-feira">Sexta-feira</option>
-              <option value="Sábado">Sábado</option>
-              <option value="Domingo">Domingo</option>
+              <option value="Contribuição">Contribuição</option>
+              <option value="Doação">Doação</option>
+              <option value="Vendas">Vendas</option>
+              <option value="Outros">Outros</option>
             </select>
           </div>
 
-          {/* Horário da Reunião */}
+          {/* Valor */}
           <div>
             <label
-              htmlFor="meetingTime"
+              htmlFor="valor"
               className="block text-sm font-medium text-gray-700"
             >
-              Horário da Reunião
+              Valor
             </label>
             <input
-              type="time"
-              id="meetingTime"
-              name="meetingTime"
-              value={formData.meetingTime}
+              type="number"
+              step="0.01"
+              id="valor"
+              name="valor"
+              value={formData.valor}
+              onChange={handleChange}
+              required
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+
+          {/* Data */}
+          <div>
+            <label
+              htmlFor="data"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Data
+            </label>
+            <input
+              type="date"
+              id="data"
+              name="data"
+              value={formData.data}
               onChange={handleChange}
               required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -184,8 +159,8 @@ const CadastrarCelulaPage = () => {
             type="submit"
             disabled={loading}
             className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
-              loading ? "bg-gray-500" : "bg-blue-500 hover:bg-blue-600"
-            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
+              loading ? "bg-gray-500" : "bg-green-500 hover:bg-green-600"
+            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`}
           >
             {loading ? "Enviando..." : "Cadastrar"}
           </button>
@@ -206,4 +181,4 @@ const CadastrarCelulaPage = () => {
   );
 };
 
-export default CadastrarCelulaPage;
+export default CadastrarEntradaPage;

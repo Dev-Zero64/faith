@@ -1,15 +1,15 @@
 import { useState } from "react";
-import axios from "axios";
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/Navbar";
+import { supabase } from "@/services/supabase"; // Importe o cliente Supabase
 
-const CadastrarEventoPage = () => {
+const CadastrarCelulaPage = () => {
   // Estado para armazenar os dados do formulário
   const [formData, setFormData] = useState({
-    title: "",
-    date: "",
-    description: "",
-    expectedParticipants: "",
+    nome: "",
+    lider: "",
+    endereco: "",
+    membros: "",
   });
 
   // Estado para mensagens de sucesso/erro
@@ -18,38 +18,37 @@ const CadastrarEventoPage = () => {
 
   // Função para lidar com mudanças no formulário
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Função para enviar os dados via axios
+  // Função para enviar os dados via Supabase
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
 
     try {
-      // Envie os dados para o servidor
-      const response = await axios.post(
-        "https://api.example.com/events",
-        formData
-      );
+      // Envie os dados para o Supabase
+      const { error } = await supabase.from("celulas").insert([formData]);
+
+      if (error) {
+        throw error;
+      }
 
       // Exiba mensagem de sucesso
-      setMessage(response.data.message || "Evento cadastrado com sucesso!");
+      setMessage("Célula cadastrada com sucesso!");
       setFormData({
-        title: "",
-        date: "",
-        description: "",
-        expectedParticipants: "",
+        nome: "",
+        lider: "",
+        endereco: "",
+        membros: "",
       });
     } catch (error: any) {
       // Exiba mensagem de erro
-      setMessage(
-        error.response?.data?.message || "Erro ao cadastrar o evento."
-      );
+      setMessage(error.message || "Erro ao cadastrar a célula.");
     } finally {
       setLoading(false);
     }
@@ -66,7 +65,7 @@ const CadastrarEventoPage = () => {
       >
         {/* Cabeçalho */}
         <h1 className="text-3xl font-bold text-gray-800">
-          Cadastrar Novo Evento
+          Cadastrar Nova Célula
         </h1>
 
         {/* Formulário */}
@@ -74,76 +73,76 @@ const CadastrarEventoPage = () => {
           onSubmit={handleSubmit}
           className="bg-white rounded-lg shadow p-6 space-y-4"
         >
-          {/* Título */}
+          {/* Nome da Célula */}
           <div>
             <label
-              htmlFor="title"
+              htmlFor="nome"
               className="block text-sm font-medium text-gray-700"
             >
-              Título do Evento
+              Nome da Célula
             </label>
             <input
               type="text"
-              id="title"
-              name="title"
-              value={formData.title}
+              id="nome"
+              name="nome"
+              value={formData.nome}
               onChange={handleChange}
               required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
           </div>
 
-          {/* Data do Evento */}
+          {/* Líder */}
           <div>
             <label
-              htmlFor="date"
+              htmlFor="lider"
               className="block text-sm font-medium text-gray-700"
             >
-              Data do Evento
+              Líder
             </label>
             <input
-              type="date"
-              id="date"
-              name="date"
-              value={formData.date}
+              type="text"
+              id="lider"
+              name="lider"
+              value={formData.lider}
               onChange={handleChange}
               required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
           </div>
 
-          {/* Descrição */}
+          {/* Endereço */}
           <div>
             <label
-              htmlFor="description"
+              htmlFor="endereco"
               className="block text-sm font-medium text-gray-700"
             >
-              Descrição
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              rows={3}
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            />
-          </div>
-
-          {/* Participantes Esperados */}
-          <div>
-            <label
-              htmlFor="expectedParticipants"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Participantes Esperados
+              Endereço
             </label>
             <input
-              type="number"
-              id="expectedParticipants"
-              name="expectedParticipants"
-              value={formData.expectedParticipants}
+              type="text"
+              id="endereco"
+              name="endereco"
+              value={formData.endereco}
+              onChange={handleChange}
+              required
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+
+          {/* Membros */}
+          <div>
+            <label
+              htmlFor="membros"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Membros
+            </label>
+            <input
+              type="text"
+              id="membros"
+              name="membros"
+              value={formData.membros}
               onChange={handleChange}
               required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -177,4 +176,4 @@ const CadastrarEventoPage = () => {
   );
 };
 
-export default CadastrarEventoPage;
+export default CadastrarCelulaPage;

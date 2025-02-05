@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Table,
@@ -9,56 +10,32 @@ import {
 } from "@/components/ui/table";
 import { Navbar } from "@/components/Navbar";
 import { Link } from "react-router-dom";
-
-// Dados fictícios para a tabela (substitua por seus dados reais)
-const entriesData = [
-  {
-    id: 1,
-    date: "2023-10-15",
-    description: "Dízimo",
-    category: "Contribuição",
-    value: 500,
-  },
-  {
-    id: 2,
-    date: "2023-10-10",
-    description: "Oferta Especial",
-    category: "Doação",
-    value: 1200,
-  },
-  {
-    id: 3,
-    date: "2023-10-20",
-    description: "Venda de Livros",
-    category: "Vendas",
-    value: 300,
-  },
-];
+import { supabase } from "@/services/supabase";
 
 // Componente para renderizar cada linha da tabela
 const EntryRow = ({ entry }: { entry: any }) => {
   return (
     <TableRow>
-      <TableCell>{entry.date}</TableCell>
-      <TableCell>{entry.description}</TableCell>
-      <TableCell>{entry.category}</TableCell>
+      <TableCell>{entry.data}</TableCell>
+      <TableCell>{entry.detalhes}</TableCell>
+      <TableCell>{entry.categoria}</TableCell>
       <TableCell className="text-green-600 font-bold">
         {new Intl.NumberFormat("pt-BR", {
           style: "currency",
           currency: "BRL",
-        }).format(entry.value)}
+        }).format(entry.valor)}
       </TableCell>
       <TableCell>
         <div className="flex gap-2">
           <button
             className="text-blue-500 hover:text-blue-600 transition-colors"
-            aria-label={`Editar entrada ${entry.description}`}
+            aria-label={`Editar entrada ${entry.detalhes}`}
           >
             Editar
           </button>
           <button
             className="text-red-500 hover:text-red-600 transition-colors"
-            aria-label={`Excluir entrada ${entry.description}`}
+            aria-label={`Excluir entrada ${entry.detalhes}`}
           >
             Excluir
           </button>
@@ -69,6 +46,31 @@ const EntryRow = ({ entry }: { entry: any }) => {
 };
 
 const EntradasPage = () => {
+  const [entriesData, setEntriesData] = useState([]); // Estado para armazenar os dados das entradas
+  const [loading, setLoading] = useState(true); // Estado para controlar o carregamento
+
+  // Função para buscar os dados das entradas do Supabase
+  const fetchEntries = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase.from("entradas").select("*");
+      if (error) {
+        console.error("Erro ao buscar entradas:", error);
+      } else {
+        setEntriesData(data || []);
+      }
+    } catch (err) {
+      console.error("Erro inesperado:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Chama a função fetchEntries quando o componente é montado
+  useEffect(() => {
+    fetchEntries();
+  }, []);
+
   return (
     <>
       <Navbar />
@@ -90,23 +92,36 @@ const EntradasPage = () => {
             </button>
           </Link>
         </div>
-
         {/* Tabela de Entradas */}
         <div className="bg-white rounded-lg shadow p-6 overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Data</TableHead>
-                <TableHead>Descrição</TableHead>
+                <TableHead>Detalhes</TableHead>
                 <TableHead>Categoria</TableHead>
                 <TableHead>Valor</TableHead>
                 <TableHead>Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {entriesData.map((entry) => (
-                <EntryRow key={entry.id} entry={entry} />
-              ))}
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center">
+                    Carregando entradas...
+                  </TableCell>
+                </TableRow>
+              ) : entriesData.length > 0 ? (
+                entriesData.map((entry) => (
+                  <EntryRow key={entry.id} entry={entry} />
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center">
+                    Nenhuma entrada encontrada.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </div>

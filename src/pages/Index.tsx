@@ -69,7 +69,9 @@ const SectionCard = ({
 
 const Index = () => {
   // Estados para armazenar os dados e o estado de carregamento
+  const [eventCount, setEventCount] = useState<number>(0);
   const [memberCount, setMemberCount] = useState<number>(0);
+  const [cellCount, setCellCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -95,6 +97,99 @@ const Index = () => {
     fetchMemberCount();
   }, []);
 
+  useEffect(() => {
+    const fetchEventCount = async () => {
+      try {
+        const { data, error } = await supabase.from("eventos").select("*");
+
+        if (error) {
+          throw error;
+        }
+
+        // Atualiza o estado com o número de membros
+        setEventCount(data?.length || 0);
+      } catch (err: any) {
+        setError(err.message || "Erro ao buscar dados dos membros.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEventCount();
+  }, []);
+
+  useEffect(() => {
+    const fetchCellCount = async () => {
+      try {
+        const { data, error } = await supabase.from("eventos").select("*");
+
+        if (error) {
+          throw error;
+        }
+
+        // Atualiza o estado com o número de membros
+        setCellCount(data?.length || 0);
+      } catch (err: any) {
+        setError(err.message || "Erro ao buscar dados dos membros.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCellCount();
+  }, []);
+
+  const [nextEvent, setNextEvent] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchNextEvent = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("eventos")
+          .select("*")
+          .gte("data", new Date().toISOString())
+          .order("data", { ascending: true })
+          .limit(1);
+
+        if (error) throw error;
+        setNextEvent(data?.[0] || null);
+      } catch (err: any) {
+        setError(err.message || "Erro ao buscar próximo evento.");
+      }
+    };
+
+    fetchNextEvent();
+  }, []);
+
+  const [totalEntradas, setTotalEntradas] = useState<number>(0);
+
+  useEffect(() => {
+    const fetchEntradas = async () => {
+      try {
+        const startOfMonth = new Date();
+        startOfMonth.setDate(1);
+        startOfMonth.setHours(0, 0, 0, 0);
+
+        const { data, error } = await supabase
+          .from("entradas")
+          .select("valor")
+          .gte("data", startOfMonth.toISOString());
+
+        if (error) throw error;
+
+        const total = data?.reduce(
+          (sum, entrada) => sum + (entrada.valor || 0),
+          0
+        );
+        setTotalEntradas(total || 0);
+      } catch (err: any) {
+        setError(err.message || "Erro ao buscar entradas financeiras.");
+      }
+    };
+
+    fetchEntradas();
+  }, []);
+
   // Dados das estatísticas
   const stats: Stat[] = [
     {
@@ -105,19 +200,19 @@ const Index = () => {
     },
     {
       title: "Eventos Realizados",
-      value: "Em breve...",
+      value: loading ? "Carregando..." : eventCount,
       color: "bg-green-500",
       icon: Calendar,
     },
     {
       title: "Entradas Financeiras",
-      value: "Em breve...",
+      value: loading ? "Carregando..." : totalEntradas,
       color: "bg-purple-500",
       icon: DollarSign,
     },
     {
-      title: "Igrejas Parceiras",
-      value: "Em breve...",
+      title: "Celulas Ativas",
+      value: loading ? "Carregando..." : cellCount,
       color: "bg-yellow-500",
       icon: Church,
     },
@@ -153,7 +248,20 @@ const Index = () => {
         {/* Seção de Próximos Eventos e Resumo Financeiro */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <SectionCard title="Próximos Eventos" delay={0.4} direction="left">
-            <p className="text-gray-600">Em breve...</p>
+            <p className="text-gray-600"> </p>
+            {nextEvent ? (
+              <div className="flex items-center space-x-4">
+                <Calendar className="text-blue-500" size={24} />
+                <div>
+                  <h3 className="font-semibold">{nextEvent.nome}</h3>
+                  <p className="text-sm text-gray-500">
+                    {new Date(nextEvent.data).toLocaleDateString()}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <p>Nenhum evento programado</p>
+            )}
           </SectionCard>
           <SectionCard title="Resumo Financeiro" delay={0.4} direction="right">
             <p className="text-gray-600">Em breve...</p>
