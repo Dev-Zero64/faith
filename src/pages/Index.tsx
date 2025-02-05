@@ -121,7 +121,7 @@ const Index = () => {
   useEffect(() => {
     const fetchCellCount = async () => {
       try {
-        const { data, error } = await supabase.from("eventos").select("*");
+        const { data, error } = await supabase.from("celulas").select("*");
 
         if (error) {
           throw error;
