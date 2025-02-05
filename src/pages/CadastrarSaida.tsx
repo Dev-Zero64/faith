@@ -1,15 +1,15 @@
 import { useState } from "react";
-import axios from "axios";
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/Navbar";
+import { supabase } from "@/services/supabase";
 
 const CadastrarSaidaPage = () => {
   // Estado para armazenar os dados do formulário
   const [formData, setFormData] = useState({
-    description: "",
-    category: "Despesa Fixa", // Valor padrão
-    value: "",
-    date: "",
+    detalhes: "",
+    categoria: "Despesa Fixa", // Valor padrão
+    valor: "",
+    data: "",
   });
 
   // Estado para mensagens de sucesso/erro
@@ -24,30 +24,31 @@ const CadastrarSaidaPage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Função para enviar os dados via axios
+  // Função para enviar os dados ao Supabase
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
 
     try {
-      // Envie os dados para o servidor
-      const response = await axios.post(
-        "https://api.example.com/expenses",
-        formData
-      );
+      // Insere os dados na tabela "saidas" no Supabase
+      const { error } = await supabase.from("saidas").insert([formData]);
 
-      // Exiba mensagem de sucesso
-      setMessage(response.data.message || "Saída cadastrada com sucesso!");
+      if (error) {
+        throw error;
+      }
+
+      // Exibe mensagem de sucesso
+      setMessage("Saída cadastrada com sucesso!");
       setFormData({
-        description: "",
-        category: "Despesa Fixa",
-        value: "",
-        date: "",
+        detalhes: "",
+        categoria: "Despesa Fixa",
+        valor: "",
+        data: "",
       });
-    } catch (error: any) {
-      // Exiba mensagem de erro
-      setMessage(error.response?.data?.message || "Erro ao cadastrar a saída.");
+    } catch (err: any) {
+      // Exibe mensagem de erro
+      setMessage(err.message || "Erro ao cadastrar a saída.");
     } finally {
       setLoading(false);
     }
@@ -72,19 +73,19 @@ const CadastrarSaidaPage = () => {
           onSubmit={handleSubmit}
           className="bg-white rounded-lg shadow p-6 space-y-4"
         >
-          {/* Descrição */}
+          {/* Detalhes */}
           <div>
             <label
-              htmlFor="description"
+              htmlFor="detalhes"
               className="block text-sm font-medium text-gray-700"
             >
-              Descrição
+              Detalhes
             </label>
             <input
               type="text"
-              id="description"
-              name="description"
-              value={formData.description}
+              id="detalhes"
+              name="detalhes"
+              value={formData.detalhes}
               onChange={handleChange}
               required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -94,15 +95,15 @@ const CadastrarSaidaPage = () => {
           {/* Categoria */}
           <div>
             <label
-              htmlFor="category"
+              htmlFor="categoria"
               className="block text-sm font-medium text-gray-700"
             >
               Categoria
             </label>
             <select
-              id="category"
-              name="category"
-              value={formData.category}
+              id="categoria"
+              name="categoria"
+              value={formData.categoria}
               onChange={handleChange}
               required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -117,7 +118,7 @@ const CadastrarSaidaPage = () => {
           {/* Valor */}
           <div>
             <label
-              htmlFor="value"
+              htmlFor="valor"
               className="block text-sm font-medium text-gray-700"
             >
               Valor
@@ -125,9 +126,9 @@ const CadastrarSaidaPage = () => {
             <input
               type="number"
               step="0.01"
-              id="value"
-              name="value"
-              value={formData.value}
+              id="valor"
+              name="valor"
+              value={formData.valor}
               onChange={handleChange}
               required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -137,16 +138,16 @@ const CadastrarSaidaPage = () => {
           {/* Data */}
           <div>
             <label
-              htmlFor="date"
+              htmlFor="data"
               className="block text-sm font-medium text-gray-700"
             >
               Data
             </label>
             <input
               type="date"
-              id="date"
-              name="date"
-              value={formData.date}
+              id="data"
+              name="data"
+              value={formData.data}
               onChange={handleChange}
               required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"

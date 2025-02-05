@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import {
@@ -10,6 +11,7 @@ import {
   Legend,
 } from "recharts";
 import { Navbar } from "@/components/Navbar";
+import { supabase } from "@/services/supabase";
 
 // Componente para exibir um cartão de resumo financeiro
 const FinanceCard = ({
@@ -25,7 +27,6 @@ const FinanceCard = ({
     style: "currency",
     currency: "BRL",
   }).format(value);
-
   return (
     <Card className="p-6">
       <h3 className="font-semibold text-lg mb-2">{title}</h3>
@@ -64,17 +65,95 @@ const FinanceChart = ({ data }: { data: any[] }) => {
 };
 
 const FinancasPage = () => {
-  // Dados fictícios para o gráfico
-  const data = [
-    { name: "Jan", entradas: 12, saidas: 2400 },
-    { name: "Fev", entradas: 3000, saidas: 1398 },
-    { name: "Mar", entradas: 2000, saidas: 9800 },
-  ];
+  // Estados para armazenar os dados
+  const [totalEntradas, setTotalEntradas] = useState(0);
+  const [totalSaidas, setTotalSaidas] = useState(0);
+  const [saldo, setSaldo] = useState(0);
+  const [chartData, setChartData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Cálculo automático dos totais
-  const totalEntradas = data.reduce((sum, item) => sum + item.entradas, 0);
-  const totalSaidas = data.reduce((sum, item) => sum + item.saidas, 0);
-  const saldo = totalEntradas - totalSaidas;
+  // Função para buscar os dados do Supabase
+  const fetchFinancialData = async () => {
+    try {
+      setLoading(true);
+
+      // Buscar entradas
+      const { data: entradasData, error: entradasError } = await supabase
+        .from("entradas")
+        .select("valor, data");
+
+      if (entradasError) {
+        console.error("Erro ao buscar entradas:", entradasError);
+      }
+
+      // Buscar saídas
+      const { data: saidasData, error: saidasError } = await supabase
+        .from("saidas")
+        .select("valor, data");
+
+      if (saidasError) {
+        console.error("Erro ao buscar saídas:", saidasError);
+      }
+
+      // Processar os dados
+      const entradasPorMes = groupByMonth(entradasData || [], true); // Entradas são positivas
+      const saidasPorMes = groupByMonth(saidasData || [], false); // Saídas são negativas
+
+      // Mesclar os dados por mês
+      const mesesUnicos = [
+        ...new Set([
+          ...Object.keys(entradasPorMes),
+          ...Object.keys(saidasPorMes),
+        ]),
+      ].sort();
+
+      const chartDataFormatted = mesesUnicos.map((mes) => ({
+        name: mes,
+        entradas: entradasPorMes[mes] || 0,
+        saidas: saidasPorMes[mes] || 0,
+      }));
+
+      // Calcular totais
+      const totalEntradas = Object.values(entradasPorMes).reduce(
+        (sum, val) => sum + val,
+        0
+      );
+      const totalSaidas = Object.values(saidasPorMes).reduce(
+        (sum, val) => sum + Math.abs(val),
+        0
+      );
+      const saldoCalculado = totalEntradas - totalSaidas;
+
+      // Atualizar estados
+      setTotalEntradas(totalEntradas);
+      setTotalSaidas(totalSaidas);
+      setSaldo(saldoCalculado);
+      setChartData(chartDataFormatted);
+    } catch (err) {
+      console.error("Erro inesperado:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Função para agrupar dados por mês
+  const groupByMonth = (data: any[], isPositive: boolean) => {
+    const grouped: Record<string, number> = {};
+
+    data.forEach((item) => {
+      const date = new Date(item.data);
+      const month = `${date.getMonth() + 1}/${date.getFullYear()}`;
+      grouped[month] =
+        (grouped[month] || 0) + (isPositive ? item.valor : -item.valor);
+    });
+
+    return grouped;
+  };
+
+  // Chama a função fetchFinancialData quando o componente é montado
+  useEffect(() => {
+    fetchFinancialData();
+  }, []);
 
   return (
     <>
@@ -110,7 +189,11 @@ const FinancasPage = () => {
         {/* Gráfico de Movimentações */}
         <Card className="p-6">
           <h2 className="text-xl font-semibold mb-4">Movimentações</h2>
-          <FinanceChart data={data} />
+          {loading ? (
+            <p>Carregando dados...</p>
+          ) : (
+            <FinanceChart data={chartData} />
+          )}
         </Card>
       </motion.div>
     </>
