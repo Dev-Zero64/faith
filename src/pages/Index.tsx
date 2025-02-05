@@ -85,7 +85,7 @@ const Index = () => {
           throw error;
         }
 
-        // Atualiza o estado com o número de membros
+       
         setMemberCount(data?.length || 0);
       } catch (err: any) {
         setError(err.message || "Erro ao buscar dados dos membros.");
@@ -106,7 +106,6 @@ const Index = () => {
           throw error;
         }
 
-        // Atualiza o estado com o número de membros
         setEventCount(data?.length || 0);
       } catch (err: any) {
         setError(err.message || "Erro ao buscar dados dos membros.");
@@ -127,7 +126,6 @@ const Index = () => {
           throw error;
         }
 
-        // Atualiza o estado com o número de membros
         setCellCount(data?.length || 0);
       } catch (err: any) {
         setError(err.message || "Erro ao buscar dados dos membros.");
@@ -157,7 +155,6 @@ const Index = () => {
         setError(err.message || "Erro ao buscar próximo evento.");
       }
     };
-
     fetchNextEvent();
   }, []);
 
@@ -186,7 +183,6 @@ const Index = () => {
         setError(err.message || "Erro ao buscar entradas financeiras.");
       }
     };
-
     fetchEntradas();
   }, []);
 

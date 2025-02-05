@@ -3,8 +3,10 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AuthProvider, useAuth } from "./context/AuthContext"; // Importe o AuthProvider e useAuth
-import { PrivateRoute } from "./components/PrivateRoutes"; // Importe o PrivateRoute
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import { PrivateRoute } from "./components/PrivateRoutes";
+import { supabase } from "./services/supabase";
+import { useEffect } from "react";
 import Index from "./pages/Index";
 import NotFound from "./auth/NotFound";
 import CelulasPage from "./pages/Celulas";
@@ -20,8 +22,6 @@ import CadastrarEntradaPage from "./pages/CadastrarEntrada";
 import CadastrarSaidaPage from "./pages/CadastrarSaida";
 import RegisterPage from "./auth/Register";
 import LoginPage from "./auth/Login";
-import { supabase } from "./services/supabase";
-import { useEffect } from "react";
 import ResetPasswordPage from "./auth/ResetPassword";
 import UpdatePassword from "./auth/UpdatePassword";
 
