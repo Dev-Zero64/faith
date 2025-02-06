@@ -3,69 +3,17 @@ import { motion } from "framer-motion";
 import { Navbar } from "@/components/Navbar";
 import { supabase } from "@/services/supabase";
 import { Users, Church, DollarSign, Calendar } from "lucide-react";
+import StatCard from "@/components/StatCard";
+import SectionCard from "@/components/SectionCard";
+import StatList from "@/components/StatList";
 
 // Interface para as estatísticas
 interface Stat {
   title: string;
   value: string | number;
   color: string;
-  icon: any; // Ícone React
+  icon: any;
 }
-
-// Componente para exibir cada estatística
-const StatCard = ({ stat }: { stat: Stat }) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
-    >
-      <div className="flex items-center space-x-4">
-        <div className={`p-3 rounded-full ${stat.color}`}>
-          <stat.icon size={24} className="text-white" aria-hidden="true" />
-        </div>
-        <div>
-          <p className="text-gray-500 text-sm">{stat.title}</p>
-          <p
-            className="text-2xl font-bold text-gray-800"
-            aria-label={`${stat.title}: ${stat.value}`}
-          >
-            {stat.value}
-          </p>
-        </div>
-      </div>
-    </motion.div>
-  );
-};
-
-// Componente genérico para seções com título e conteúdo
-const SectionCard = ({
-  title,
-  children,
-  delay = 0,
-  direction = "left",
-}: {
-  title: string;
-  children: React.ReactNode;
-  delay?: number;
-  direction?: "left" | "right";
-}) => {
-  const xDirection = direction === "left" ? -20 : 20;
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: xDirection }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay }}
-      className="bg-white p-6 rounded-xl shadow-lg"
-    >
-      <h2 className="text-xl font-bold text-gray-800 mb-4" aria-label={title}>
-        {title}
-      </h2>
-      {children}
-    </motion.div>
-  );
-};
 
 // Função genérica para buscar dados do Supabase
 const fetchData = async (table: string, queryFn?: (query: any) => any) => {
@@ -192,11 +140,7 @@ const Index = () => {
           Dashboard
         </motion.h1>
         {error && <p className="text-red-500 text-center text-sm">{error}</p>}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {stats.map((stat, index) => (
-            <StatCard key={stat.title} stat={stat} />
-          ))}
-        </div>
+        <StatList stats={stats} />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <SectionCard title="Próximos Eventos" delay={0.4} direction="left">
             {nextEvent ? (

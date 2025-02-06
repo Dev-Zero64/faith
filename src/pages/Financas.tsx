@@ -1,118 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
-import { Navbar } from "@/components/Navbar";
+import FinanceCard from "@/components/FinanceCard";
+import FinanceChart from "@/components/FinanceChart";
+import FinanceLayout from "@/components/FinanceLayout";
+import FinanceTitle from "@/components/FinanceTitle";
 import { supabase } from "@/services/supabase";
 
-// Componente para exibir um cartão de resumo financeiro
-const FinanceCard = ({
-  title,
-  value,
-  color,
-}: {
-  title: string;
-  value: number;
-  color: string;
-}) => {
-  const formattedValue = new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(value);
-  return (
-    <Card className="p-6">
-      <h3 className="font-semibold text-lg mb-2">{title}</h3>
-      <p
-        className={`text-2xl font-bold ${
-          value >= 0 ? "text-green-600" : "text-red-600"
-        }`}
-      >
-        {formattedValue}
-      </p>
-    </Card>
-  );
-};
-
-// Componente para exibir o gráfico de movimentações
-const FinanceChart = ({ data }: { data: any[] }) => {
-  // Configurações responsivas
-  const isMobile = window.innerWidth < 768;
-  const mobileMargin = { top: 5, right: 10, left: 10, bottom: 5 };
-  const desktopMargin = { top: 5, right: 30, left: 20, bottom: 5 };
-
-  return (
-    <div className="w-full h-[250px] sm:h-[300px]">
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          data={data}
-          margin={isMobile ? mobileMargin : desktopMargin}
-          className="mx-auto"
-        >
-          <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.4} />
-
-          <XAxis
-            dataKey="name"
-            angle={isMobile ? -45 : 0}
-            tick={{ fontSize: isMobile ? 10 : 12 }}
-            interval={isMobile ? "preserveStartEnd" : 0}
-            height={isMobile ? 60 : undefined}
-          />
-
-          <YAxis
-            tick={{ fontSize: isMobile ? 10 : 12 }}
-            width={isMobile ? 40 : 60}
-          />
-
-          <Tooltip
-            contentStyle={{
-              fontSize: isMobile ? 12 : 14,
-              padding: "8px 12px",
-              borderRadius: "8px",
-              backgroundColor: "#1F2937",
-              border: "none",
-            }}
-            itemStyle={{ color: "#fff" }}
-          />
-
-          <Legend
-            wrapperStyle={{ paddingTop: isMobile ? "10px" : "0" }}
-            layout={isMobile ? "horizontal" : "vertical"}
-            verticalAlign={isMobile ? "bottom" : "middle"}
-            align="center"
-            iconSize={isMobile ? 12 : 16}
-          />
-
-          <Line
-            type="monotone"
-            dataKey="entradas"
-            stroke="#10B981"
-            strokeWidth={2}
-            dot={!isMobile}
-            activeDot={{ r: isMobile ? 4 : 6 }}
-          />
-
-          <Line
-            type="monotone"
-            dataKey="saidas"
-            stroke="#EF4444"
-            strokeWidth={2}
-            dot={!isMobile}
-            activeDot={{ r: isMobile ? 4 : 6 }}
-          />
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
-  );
-};
 const FinancasPage = () => {
   // Estados para armazenar os dados
   const [totalEntradas, setTotalEntradas] = useState(0);
@@ -205,47 +98,34 @@ const FinancasPage = () => {
   }, []);
 
   return (
-    <>
-      <Navbar />
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="space-y-6 container mx-auto px-4 py-8"
-      >
-        {/* Título */}
-        <h1 className="text-3xl font-bold text-gray-800">Finanças</h1>
+    <FinanceLayout>
+      <FinanceTitle />
 
-        {/* Cartões de Resumo Financeiro */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <FinanceCard
-            title="Total de Entradas"
-            value={totalEntradas}
-            color="green"
-          />
-          <FinanceCard
-            title="Total de Saídas"
-            value={totalSaidas}
-            color="red"
-          />
-          <FinanceCard
-            title="Saldo"
-            value={saldo}
-            color={saldo >= 0 ? "green" : "red"}
-          />
-        </div>
+      {/* Cartões de Resumo Financeiro */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <FinanceCard
+          title="Total de Entradas"
+          value={totalEntradas}
+          color="green"
+        />
+        <FinanceCard title="Total de Saídas" value={totalSaidas} color="red" />
+        <FinanceCard
+          title="Saldo"
+          value={saldo}
+          color={saldo >= 0 ? "green" : "red"}
+        />
+      </div>
 
-        {/* Gráfico de Movimentações */}
-        <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Movimentações</h2>
-          {loading ? (
-            <p>Carregando dados...</p>
-          ) : (
-            <FinanceChart data={chartData} />
-          )}
-        </Card>
-      </motion.div>
-    </>
+      {/* Gráfico de Movimentações */}
+      <Card className="p-6">
+        <h2 className="text-xl font-semibold mb-4">Movimentações</h2>
+        {loading ? (
+          <p>Carregando dados...</p>
+        ) : (
+          <FinanceChart data={chartData} />
+        )}
+      </Card>
+    </FinanceLayout>
   );
 };
 
