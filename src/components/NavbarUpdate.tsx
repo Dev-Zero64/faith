@@ -15,8 +15,7 @@ interface NavItemProps {
   path?: string;
   icon: React.ElementType;
   submenu?: { path: string; title: string }[];
-  isOpen: boolean;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 const NavItem: React.FC<NavItemProps> = ({
@@ -24,16 +23,19 @@ const NavItem: React.FC<NavItemProps> = ({
   path,
   icon: Icon,
   submenu,
-  isOpen,
   onClick,
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleDropdown = useCallback(() => setIsOpen((prev) => !prev), []);
+
   return (
     <div className="relative">
       {submenu ? (
         <>
           <button
             className="flex items-center gap-2 p-2 rounded-lg hover:bg-white/10 transition-all"
-            onClick={onClick}
+            onClick={toggleDropdown}
             aria-expanded={isOpen}
             aria-haspopup={true}
           >
@@ -89,22 +91,21 @@ const NavItem: React.FC<NavItemProps> = ({
 
 interface ProfileDropdownProps {
   user: { email: string };
-  isOpen: boolean;
-  onClick: () => void;
   onLogout: () => void;
 }
 
 const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
   user,
-  isOpen,
-  onClick,
   onLogout,
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const toggleDropdown = useCallback(() => setIsOpen((prev) => !prev), []);
+
   return (
     <div className="relative">
       <button
         className="flex items-center gap-2 p-2 rounded-lg hover:bg-white/10 cursor-pointer transition-all"
-        onClick={onClick}
+        onClick={toggleDropdown}
         aria-expanded={isOpen}
         aria-haspopup={true}
       >
@@ -149,7 +150,6 @@ export const Navbar = () => {
   const [isMobile, setIsMobile] = useState(
     window.innerWidth < MOBILE_BREAKPOINT
   );
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null); // Controla qual dropdown está aberto
   const { user, signOut } = useAuth();
 
   const updateMedia = useCallback(() => {
@@ -172,10 +172,6 @@ export const Navbar = () => {
 
   const closeMobileMenu = useCallback(() => setIsMobileMenuOpen(false), []);
 
-  const toggleDropdown = useCallback((dropdownKey: string) => {
-    setActiveDropdown((prev) => (prev === dropdownKey ? null : dropdownKey));
-  }, []);
-
   return (
     <div className="w-full h-20 bg-gray-900 text-white flex items-center justify-between px-4 md:px-6 relative">
       {/* Logo */}
@@ -194,13 +190,7 @@ export const Navbar = () => {
 
       {/* Conteúdo da Navbar (Desktop) */}
       <nav className="hidden md:flex items-center gap-4">
-        <NavItem
-          title="Dashboard"
-          path="/"
-          icon={Home}
-          onClick={() => {}}
-          isOpen={false}
-        />
+        <NavItem title="Dashboard" path="/" icon={Home} />
         {menuItems.map((item) => (
           <NavItem
             key={item.title}
@@ -208,18 +198,9 @@ export const Navbar = () => {
             path={item.path}
             icon={item.icon}
             submenu={item.submenu}
-            isOpen={activeDropdown === item.title}
-            onClick={() => toggleDropdown(item.title)}
           />
         ))}
-        {user && (
-          <ProfileDropdown
-            user={user}
-            isOpen={activeDropdown === "profile"}
-            onClick={() => toggleDropdown("profile")}
-            onLogout={handleLogout}
-          />
-        )}
+        {user && <ProfileDropdown user={user} onLogout={handleLogout} />}
       </nav>
 
       {/* Menu Móvel */}
@@ -231,6 +212,7 @@ export const Navbar = () => {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
             className="absolute top-full left-0 w-full bg-gray-900 shadow-lg md:hidden z-10"
+            style={{ marginTop: `${NAVBAR_HEIGHT}px` }}
           >
             <div className="p-4 space-y-4">
               <NavItem
@@ -238,7 +220,6 @@ export const Navbar = () => {
                 path="/"
                 icon={Home}
                 onClick={closeMobileMenu}
-                isOpen={false}
               />
               {menuItems.map((item) => (
                 <div key={item.title} className="space-y-2">
@@ -247,8 +228,7 @@ export const Navbar = () => {
                     path={item.path}
                     icon={item.icon}
                     submenu={item.submenu}
-                    isOpen={activeDropdown === item.title}
-                    onClick={() => toggleDropdown(item.title)}
+                    onClick={closeMobileMenu}
                   />
                 </div>
               ))}
