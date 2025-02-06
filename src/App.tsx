@@ -57,8 +57,8 @@ const App = () => {
               {/* Rota pública */}
               <Route path="/login" element={<LoginPage />} />
               <Route path="/cadastro" element={<RegisterPage />} />
-              <Route path="reset-password" element={<ResetPasswordPage />} />
-              <Route path="update-password" element={<UpdatePassword />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
+              <Route path="/update-password" element={<UpdatePassword />} />
               {/* Rotas privadas */}
               <Route
                 path="/"

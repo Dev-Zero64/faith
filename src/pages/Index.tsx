@@ -85,7 +85,6 @@ const Index = () => {
           throw error;
         }
 
-       
         setMemberCount(data?.length || 0);
       } catch (err: any) {
         setError(err.message || "Erro ao buscar dados dos membros.");
