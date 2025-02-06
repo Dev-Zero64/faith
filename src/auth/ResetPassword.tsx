@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { supabase } from "@/services/supabase";
 import { motion } from "framer-motion";
 import { Mail, AlertCircle, CheckCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const ResetPasswordPage = () => {
   const [email, setEmail] = useState("");
@@ -92,6 +93,12 @@ const ResetPasswordPage = () => {
           >
             Enviar Link de Redefinição
           </motion.button>
+          <Link
+            to="/login"
+            className=" hover:text-blue-800 font-medium transition-colors text-center text-blue-600 hover:underline block mt-4 "
+          >
+            Voltar
+          </Link>
         </form>
 
         {/* Feedback Visual */}

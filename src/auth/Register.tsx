@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { supabase } from "@/services/supabase";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Eye,
@@ -189,12 +189,12 @@ const RegisterPage = () => {
         >
           <p className="text-sm text-gray-500">
             Já tem cadastro?{" "}
-            <a
-              href="/login"
+            <Link
+              to="/login"
               className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
             >
               Fazer login
-            </a>
+            </Link>
           </p>
         </motion.div>
 

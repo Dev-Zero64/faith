@@ -11,6 +11,8 @@ import {
   CheckCircle,
 } from "lucide-react";
 
+import { Link } from "react-router-dom";
+
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -63,7 +65,7 @@ const LoginPage = () => {
         </motion.h1>
 
         <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-          {/* Email Input */}
+      
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -83,7 +85,7 @@ const LoginPage = () => {
             </div>
           </motion.div>
 
-          {/* Password Input */}
+      
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -114,7 +116,7 @@ const LoginPage = () => {
             </div>
           </motion.div>
 
-          {/* Login Button */}
+         
           <motion.button
             type="submit"
             onClick={handleLogin}
@@ -138,15 +140,15 @@ const LoginPage = () => {
           </motion.button>
         </form>
 
-        {/* Links Section */}
+      
         <motion.div
           className="flex flex-col items-center space-y-4 pt-4 border-t border-gray-100"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 1 }}
         >
-          <a
-            href="/reset-password"
+          <Link
+            to="/reset-password"
             className="text-sm text-blue-600 hover:text-blue-800 transition-colors font-medium flex items-center"
           >
             <span>Recuperar senha</span>
@@ -162,16 +164,16 @@ const LoginPage = () => {
                 clipRule="evenodd"
               />
             </svg>
-          </a>
+          </Link>
 
           <div className="text-sm text-gray-500">
             Não tem uma conta?{" "}
-            <a
-              href="/cadastro"
+            <Link
+              to="/cadastro"
               className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
             >
               Cadastre-se
-            </a>
+            </Link>
           </div>
         </motion.div>
 
