@@ -28,22 +28,6 @@ import UpdatePassword from "./auth/UpdatePassword";
 const queryClient = new QueryClient();
 
 const App = () => {
-  useEffect(() => {
-    // Verifica a sessão atual ao carregar o app
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log("Sessão atual:", session);
-    });
-
-    // Escuta mudanças na autenticação
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log("Mudança de sessão:", session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
