@@ -67,125 +67,86 @@ const SectionCard = ({
   );
 };
 
+// Função genérica para buscar dados do Supabase
+const fetchData = async (table: string, queryFn?: (query: any) => any) => {
+  let query = supabase.from(table).select("*");
+  if (queryFn) {
+    query = queryFn(query);
+  }
+  const { data, error } = await query;
+  if (error) throw error;
+  return data;
+};
+
 const Index = () => {
-  // Estados para armazenar os dados e o estado de carregamento
   const [eventCount, setEventCount] = useState<number>(0);
   const [memberCount, setMemberCount] = useState<number>(0);
   const [cellCount, setCellCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Função para buscar o número de membros cadastrados no Supabase
-  useEffect(() => {
-    const fetchMemberCount = async () => {
-      try {
-        const { data, error } = await supabase.from("membros").select("*");
-
-        if (error) {
-          throw error;
-        }
-
-        setMemberCount(data?.length || 0);
-      } catch (err: any) {
-        setError(err.message || "Erro ao buscar dados dos membros.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMemberCount();
-  }, []);
-
-  useEffect(() => {
-    const fetchEventCount = async () => {
-      try {
-        const { data, error } = await supabase.from("eventos").select("*");
-
-        if (error) {
-          throw error;
-        }
-
-        setEventCount(data?.length || 0);
-      } catch (err: any) {
-        setError(err.message || "Erro ao buscar dados dos membros.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEventCount();
-  }, []);
-
-  useEffect(() => {
-    const fetchCellCount = async () => {
-      try {
-        const { data, error } = await supabase.from("celulas").select("*");
-
-        if (error) {
-          throw error;
-        }
-
-        setCellCount(data?.length || 0);
-      } catch (err: any) {
-        setError(err.message || "Erro ao buscar dados dos membros.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCellCount();
-  }, []);
-
   const [nextEvent, setNextEvent] = useState<any>(null);
-
-  useEffect(() => {
-    const fetchNextEvent = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("eventos")
-          .select("*")
-          .gte("data", new Date().toISOString())
-          .order("data", { ascending: true })
-          .limit(1);
-
-        if (error) throw error;
-        setNextEvent(data?.[0] || null);
-      } catch (err: any) {
-        setError(err.message || "Erro ao buscar próximo evento.");
-      }
-    };
-    fetchNextEvent();
-  }, []);
-
   const [totalEntradas, setTotalEntradas] = useState<number>(0);
 
   useEffect(() => {
+    const fetchDataAndSetState = async (
+      table: string,
+      setState: (value: any) => void,
+      queryFn?: (query: any) => any
+    ) => {
+      try {
+        const data = await fetchData(table, queryFn);
+        setState(data.length || 0);
+      } catch (err: any) {
+        setError(err.message || `Erro ao buscar dados de ${table}.`);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDataAndSetState("membros", setMemberCount);
+    fetchDataAndSetState("eventos", setEventCount);
+    fetchDataAndSetState("celulas", setCellCount);
+
+    const fetchNextEvent = async () => {
+      try {
+        const data = await fetchData("eventos", (query) =>
+          query
+            .gte("data", new Date().toISOString())
+            .order("data", { ascending: true })
+            .limit(1)
+        );
+        setNextEvent(data[0] || null);
+      } catch (err: any) {
+        setError(err.message || "Erro ao buscar próximo evento.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     const fetchEntradas = async () => {
       try {
         const startOfMonth = new Date();
         startOfMonth.setDate(1);
         startOfMonth.setHours(0, 0, 0, 0);
-
-        const { data, error } = await supabase
-          .from("entradas")
-          .select("valor")
-          .gte("data", startOfMonth.toISOString());
-
-        if (error) throw error;
-
-        const total = data?.reduce(
+        const data = await fetchData("entradas", (query) =>
+          query.gte("data", startOfMonth.toISOString()).select("valor")
+        );
+        const total = data.reduce(
           (sum, entrada) => sum + (entrada.valor || 0),
           0
         );
         setTotalEntradas(total || 0);
       } catch (err: any) {
         setError(err.message || "Erro ao buscar entradas financeiras.");
+      } finally {
+        setLoading(false);
       }
     };
+
+    fetchNextEvent();
     fetchEntradas();
   }, []);
 
-  // Dados das estatísticas
   const stats: Stat[] = [
     {
       title: "Membros Cadastrados",
@@ -201,12 +162,17 @@ const Index = () => {
     },
     {
       title: "Entradas Financeiras",
-      value: loading ? "Carregando..." : totalEntradas,
+      value: loading
+        ? "Carregando..."
+        : totalEntradas.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          }),
       color: "bg-purple-500",
       icon: DollarSign,
     },
     {
-      title: "Celulas Ativas",
+      title: "Células Ativas",
       value: loading ? "Carregando..." : cellCount,
       color: "bg-yellow-500",
       icon: Church,
@@ -215,12 +181,8 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Navbar */}
       <Navbar />
-
-      {/* Conteúdo principal */}
       <div className="container mx-auto px-4 py-8 space-y-8">
-        {/* Título da página */}
         <motion.h1
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -229,21 +191,14 @@ const Index = () => {
         >
           Dashboard
         </motion.h1>
-
-        {/* Mensagem de erro */}
         {error && <p className="text-red-500 text-center text-sm">{error}</p>}
-
-        {/* Seção de Estatísticas */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat, index) => (
             <StatCard key={stat.title} stat={stat} />
           ))}
         </div>
-
-        {/* Seção de Próximos Eventos e Resumo Financeiro */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <SectionCard title="Próximos Eventos" delay={0.4} direction="left">
-            <p className="text-gray-600"> </p>
             {nextEvent ? (
               <div className="flex items-center space-x-4">
                 <Calendar className="text-blue-500" size={24} />
