@@ -1,155 +1,22 @@
+// filepath: src/components/Navbar.tsx
 import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, LogOut, User, Menu, X } from "lucide-react";
+import { Menu, X, Home, User, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Home } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { menuItems } from "@/types/menuItems";
-import clsx from "clsx";
+
+import NavItem from "./NavItem";
+import ProfileDropdown from "./ProfileDropdown";
 
 const MOBILE_BREAKPOINT = 768;
-const NAVBAR_HEIGHT = 80;
-
-interface NavItemProps {
-  title: string;
-  path?: string;
-  icon: React.ElementType;
-  submenu?: { path: string; title: string }[];
-  isOpen: boolean;
-  onClick: () => void;
-}
-
-const NavItem: React.FC<NavItemProps> = ({
-  title,
-  path,
-  icon: Icon,
-  submenu,
-  isOpen,
-  onClick,
-}) => {
-  return (
-    <div className="relative">
-      {submenu ? (
-        <>
-          <button
-            className="flex items-center gap-2 p-2 rounded-lg hover:bg-white/10 transition-all"
-            onClick={onClick}
-            aria-expanded={isOpen}
-            aria-haspopup={true}
-          >
-            <Icon size={20} />
-            <span>{title}</span>
-            <ChevronDown
-              size={20}
-              className={clsx(
-                "transform transition-transform",
-                isOpen && "rotate-180"
-              )}
-            />
-          </button>
-          <AnimatePresence>
-            {isOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
-                className="absolute top-full left-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg overflow-hidden z-10"
-              >
-                <div className="p-2 space-y-2">
-                  {submenu.map((subItem) => (
-                    <Link
-                      key={subItem.path}
-                      to={subItem.path}
-                      className="block p-2 rounded-lg hover:bg-white/10 transition-all"
-                      onClick={onClick}
-                      aria-label={`Navegar para ${subItem.title}`}
-                    >
-                      {subItem.title}
-                    </Link>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </>
-      ) : (
-        <Link
-          to={path || "#"}
-          className="flex items-center gap-2 p-2 rounded-lg hover:bg-white/10 transition-all"
-          onClick={onClick}
-        >
-          <Icon size={20} />
-          <span>{title}</span>
-        </Link>
-      )}
-    </div>
-  );
-};
-
-interface ProfileDropdownProps {
-  user: { email: string };
-  isOpen: boolean;
-  onClick: () => void;
-  onLogout: () => void;
-}
-
-const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
-  user,
-  isOpen,
-  onClick,
-  onLogout,
-}) => {
-  return (
-    <div className="relative">
-      <button
-        className="flex items-center gap-2 p-2 rounded-lg hover:bg-white/10 cursor-pointer transition-all"
-        onClick={onClick}
-        aria-expanded={isOpen}
-        aria-haspopup={true}
-      >
-        <User size={20} />
-        <span>{user.email || "Usuário"}</span>
-        <ChevronDown
-          size={20}
-          className={clsx(
-            "transform transition-transform",
-            isOpen && "rotate-180"
-          )}
-        />
-      </button>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="absolute top-full right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg overflow-hidden z-10"
-          >
-            <div className="p-2 space-y-2">
-              <button
-                className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-white/10 transition-all"
-                onClick={onLogout}
-                aria-label="Sair"
-              >
-                <LogOut size={20} />
-                Sair
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-};
 
 export const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(
     window.innerWidth < MOBILE_BREAKPOINT
   );
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null); // Controla qual dropdown está aberto
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const { user, signOut } = useAuth();
 
   const updateMedia = useCallback(() => {
