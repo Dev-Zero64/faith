@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ActionButton } from "./ActionButton";
+import { ActionButton } from "../Layout/ActionButton";
 
 interface Event {
   id: number;

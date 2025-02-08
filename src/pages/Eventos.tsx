@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/components/Layout/Navbar";
 import { supabase } from "@/services/supabase";
-import EventTable from "@/components/EventTable";
-import EventModal from "@/components/EventModal";
-import { ActionButton } from "@/components/ActionButton";
+import EventTable from "@/components/Eventos/EventTable";
+import EventModal from "@/components/Eventos/EditEventModal";
 
 const EventosPage = () => {
   const [eventsData, setEventsData] = useState([]);

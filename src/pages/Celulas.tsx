@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { supabase } from "@/services/supabase";
-import CellTable from "@/components/CellTable";
-import EditCellModal from "@/components/EditCellModal";
-import { Navbar } from "@/components/Navbar";
+import CellTable from "@/components/Celulas/CellTable";
+import EditCellModal from "@/components/Celulas/EditCellModal";
+import { Navbar } from "@/components/Layout/Navbar";
 import {
   Table,
   TableBody,

@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/components/Layout/Navbar";
 import { supabase } from "@/services/supabase"; // Importe o cliente Supabase
 
 const CadastrarCelulaPage = () => {
-  // Estado para armazenar os dados do formulário
   const [formData, setFormData] = useState({
     nome: "",
     lider: "",
@@ -12,7 +11,6 @@ const CadastrarCelulaPage = () => {
     membros: "",
   });
 
-  // Estado para mensagens de sucesso/erro
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -24,21 +22,19 @@ const CadastrarCelulaPage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Função para enviar os dados via Supabase
+  // Função para enviar os dados ao Supabase
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
 
     try {
-      // Envie os dados para o Supabase
       const { error } = await supabase.from("celulas").insert([formData]);
 
       if (error) {
         throw error;
       }
 
-      // Exiba mensagem de sucesso
       setMessage("Célula cadastrada com sucesso!");
       setFormData({
         nome: "",
@@ -47,7 +43,6 @@ const CadastrarCelulaPage = () => {
         membros: "",
       });
     } catch (error: any) {
-      // Exiba mensagem de erro
       setMessage(error.message || "Erro ao cadastrar a célula.");
     } finally {
       setLoading(false);

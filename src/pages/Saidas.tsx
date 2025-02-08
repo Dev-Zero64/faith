@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/components/Layout/Navbar";
 import { Link } from "react-router-dom";
 import { supabase } from "@/services/supabase";
-import ExpensesTable from "@/components/ExpensesTable";
-import EditExpenseModal from "@/components/EditExpenseModal";
+import ExpensesTable from "@/components/Finanças/ExpensesTable";
+import EditExpenseModal from "@/components/Finanças/EditExpenseModal";
 
 const SaidasPage = () => {
-  const [expensesData, setExpensesData] = useState([]); // Estado para armazenar os dados das saídas
-  const [loading, setLoading] = useState(true); // Estado para controlar o carregamento
-  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar a visibilidade do modal
-  const [editingExpense, setEditingExpense] = useState(null); // Estado para armazenar a saída sendo editada
+  const [expensesData, setExpensesData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingExpense, setEditingExpense] = useState(null);
 
   const handleDelete = async (id: number) => {
     if (window.confirm("Tem certeza que deseja excluir esta saída?")) {
@@ -19,7 +19,6 @@ const SaidasPage = () => {
         if (error) {
           throw error;
         }
-        // Atualiza os dados localmente
         setExpensesData((prev) => prev.filter((expense) => expense.id !== id));
       } catch (err: any) {
         console.error("Erro ao deletar saída:", err.message);

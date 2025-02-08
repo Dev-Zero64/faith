@@ -16,12 +16,7 @@ const SectionCard: React.FC<SectionCardProps> = ({
 }) => {
   const xDirection = direction === "left" ? -20 : 20;
   return (
-    <motion.div
-      initial={{ opacity: 0, x: xDirection }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay }}
-      className="bg-white p-6 rounded-xl shadow-lg"
-    >
+    <motion.div className="bg-white p-6 rounded-xl shadow-lg">
       <h2 className="text-xl font-bold text-gray-800 mb-4" aria-label={title}>
         {title}
       </h2>
