@@ -5,8 +5,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { PrivateRoute } from "./components/PrivateRoutes";
-import { supabase } from "./services/supabase";
-import { useEffect } from "react";
 import Index from "./pages/Index";
 import NotFound from "./auth/NotFound";
 import CelulasPage from "./pages/Celulas";
@@ -31,14 +29,12 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        {" "}
-        {/* Envolve o app com o AuthProvider */}
         <TooltipProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter>
             <Routes>
-              {/* Rota pública */}
+              {/* Rotas públicas */}
               <Route path="/login" element={<LoginPage />} />
               <Route path="/cadastro" element={<RegisterPage />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
@@ -132,7 +128,6 @@ const App = () => {
                   </PrivateRoute>
                 }
               />
-
               <Route
                 path="/membros/novo"
                 element={
@@ -141,8 +136,6 @@ const App = () => {
                   </PrivateRoute>
                 }
               />
-
-              {/* Página 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

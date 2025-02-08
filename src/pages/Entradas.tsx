@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/components/Layout/Navbar";
 import { Link } from "react-router-dom";
 import { supabase } from "@/services/supabase";
-import EntryTable from "@/components/EntryTable";
-import EntryModal from "@/components/EntryModal";
+import EntryTable from "@/components/Finanças/EntryTable";
+import EntryModal from "@/components/Finanças/EditEntryModal";
 import { TableRow, TableCell } from "@/components/ui/table";
 // Componente para renderizar cada linha da tabela
 export const EntryRow = ({

@@ -10,12 +10,7 @@ interface Stat {
 
 const StatCard: React.FC<{ stat: Stat }> = ({ stat }) => {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
-    >
+    <motion.div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
       <div className="flex items-center space-x-4">
         <div className={`p-3 rounded-full ${stat.color}`}>
           <stat.icon size={24} className="text-white" aria-hidden="true" />

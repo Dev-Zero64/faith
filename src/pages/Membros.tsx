@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/components/Layout/Navbar";
 import { Link } from "react-router-dom";
 import { supabase } from "@/services/supabase";
-import { MemberTable } from "@/components/MemberTable";
-import { MemberForm } from "@/components/MemberForm";
+import { MemberTable } from "@/components/Membros/MemberTable";
+import { MemberForm } from "@/components/Membros/EditMemberModal";
 
 const MembrosPage = () => {
   const [membersData, setMembersData] = useState<any[]>([]);

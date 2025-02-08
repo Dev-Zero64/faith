@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
-import FinanceCard from "@/components/FinanceCard";
-import FinanceChart from "@/components/FinanceChart";
-import FinanceLayout from "@/components/FinanceLayout";
+import FinanceCard from "@/components/Finanças/FinanceCard";
+import FinanceChart from "@/components/Finanças/FinanceChart";
+import FinanceLayout from "@/components/Finanças/FinanceLayout";
 import { supabase } from "@/services/supabase";
 
 const FinancasPage = () => {

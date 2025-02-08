@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { supabase } from "@/services/supabase";
 import { motion } from "framer-motion";
-import { Navbar } from "@/components/Navbar";
-import FormularioCadastro from "@/components/FormularioCadastro";
+import { Navbar } from "@/components/Layout/Navbar";
+import FormularioCadastro from "@/components/Membros/FormularioCadastro";
 
 const CadastroPage = () => {
   // Estado para armazenar os dados do formulário

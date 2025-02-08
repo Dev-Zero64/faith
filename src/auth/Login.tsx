@@ -48,29 +48,14 @@ const LoginPage = () => {
   };
 
   return (
-    <motion.div
-      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50">
       <div className="bg-white/90 backdrop-blur-lg p-12 rounded-2xl shadow-xl space-y-6 max-w-md w-full mx-4 border border-gray-100">
-        <motion.h1
-          className="text-3xl font-bold text-gray-900 text-center mb-8 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
+        <h1 className="text-3xl font-bold text-gray-900 text-center mb-8 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
           Bem-vindo de volta
-        </motion.h1>
+        </h1>
 
         <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-      
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
+          <motion.div>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
@@ -85,12 +70,7 @@ const LoginPage = () => {
             </div>
           </motion.div>
 
-      
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.6 }}
-          >
+          <motion.div>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
@@ -116,7 +96,6 @@ const LoginPage = () => {
             </div>
           </motion.div>
 
-         
           <motion.button
             type="submit"
             onClick={handleLogin}
@@ -124,9 +103,6 @@ const LoginPage = () => {
             className={`w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3.5 rounded-lg font-semibold hover:shadow-lg transition-all ${
               loading ? "opacity-90 cursor-wait" : "hover:scale-[1.02]"
             }`}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.8 }}
             whileTap={!loading ? { scale: 0.98 } : undefined}
           >
             {loading ? (
@@ -140,30 +116,12 @@ const LoginPage = () => {
           </motion.button>
         </form>
 
-      
-        <motion.div
-          className="flex flex-col items-center space-y-4 pt-4 border-t border-gray-100"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 1 }}
-        >
+        <motion.div className="flex flex-col items-center space-y-4 pt-4 border-t border-gray-100">
           <Link
             to="/reset-password"
             className="text-sm text-blue-600 hover:text-blue-800 transition-colors font-medium flex items-center"
           >
             <span>Recuperar senha</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 ml-1"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
-                clipRule="evenodd"
-              />
-            </svg>
           </Link>
 
           <div className="text-sm text-gray-500">
@@ -179,14 +137,12 @@ const LoginPage = () => {
 
         {/* Feedback Message */}
         {message && (
-          <motion.div
+          <div
             className={`p-3 rounded-lg flex items-center space-x-2 text-sm ${
               message.includes("sucesso")
                 ? "bg-green-100 text-green-800"
                 : "bg-red-100 text-red-800"
             }`}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
           >
             {message.includes("sucesso") ? (
               <CheckCircle className="h-5 w-5" />
@@ -194,10 +150,10 @@ const LoginPage = () => {
               <AlertCircle className="h-5 w-5" />
             )}
             <span>{message}</span>
-          </motion.div>
+          </div>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 };
 

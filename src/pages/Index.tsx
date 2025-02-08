@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/components/Layout/Navbar";
 import { supabase } from "@/services/supabase";
 import { Users, Church, DollarSign, Calendar } from "lucide-react";
-import StatCard from "@/components/StatCard";
-import SectionCard from "@/components/SectionCard";
-import StatList from "@/components/StatList";
+import StatCard from "@/components/Index/StatCard";
+import SectionCard from "@/components/Index/SectionCard";
+import StatList from "@/components/Index/StatList";
 
 // Interface para as estatísticas
 interface Stat {
@@ -25,6 +25,12 @@ const fetchData = async (table: string, queryFn?: (query: any) => any) => {
   if (error) throw error;
   return data;
 };
+
+function addDays(date: any, days: number) { 
+  var result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}
 
 const Index = () => {
   const [eventCount, setEventCount] = useState<number>(0);
@@ -131,12 +137,7 @@ const Index = () => {
     <div className="min-h-screen bg-gray-100">
       <Navbar />
       <div className="container mx-auto px-4 py-8 space-y-8">
-        <motion.h1
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-3xl text-center font-bold text-gray-800"
-        >
+        <motion.h1 className="text-3xl text-center font-bold text-gray-800">
           Dashboard
         </motion.h1>
         {error && <p className="text-red-500 text-center text-sm">{error}</p>}
@@ -149,7 +150,9 @@ const Index = () => {
                 <div>
                   <h3 className="font-semibold">{nextEvent.nome}</h3>
                   <p className="text-sm text-gray-500">
-                    {new Date(nextEvent.data).toLocaleDateString()}
+                    {new Date(
+                      addDays(new Date(nextEvent.data), 1)
+                    ).toLocaleDateString()}
                   </p>
                 </div>
               </div>
