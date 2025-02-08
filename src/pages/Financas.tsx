@@ -3,7 +3,6 @@ import { Card } from "@/components/ui/card";
 import FinanceCard from "@/components/FinanceCard";
 import FinanceChart from "@/components/FinanceChart";
 import FinanceLayout from "@/components/FinanceLayout";
-import FinanceTitle from "@/components/FinanceTitle";
 import { supabase } from "@/services/supabase";
 
 const FinancasPage = () => {
@@ -99,7 +98,7 @@ const FinancasPage = () => {
 
   return (
     <FinanceLayout>
-      <FinanceTitle />
+      <h1 className="text-3xl font-bold text-gray-800">Finanças</h1>
 
       {/* Cartões de Resumo Financeiro */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

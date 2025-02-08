@@ -5,7 +5,6 @@ import { Navbar } from "@/components/Navbar";
 import { supabase } from "@/services/supabase";
 import EventTable from "@/components/EventTable";
 import EventModal from "@/components/EventModal";
-import { ActionButton } from "@/components/ActionButton";
 
 const EventosPage = () => {
   const [eventsData, setEventsData] = useState([]);
